@@ -1,18 +1,12 @@
 <template>
-  <main>
-    <header>
-      <h1><router-link to="/">LET'S GET SHITFACED 🍻</router-link></h1>
-    </header>
-    <movie-search v-model="imdbId" />
-    <template v-if="results">
+  <words-table :results="results" v-if="movie">
+    <template v-slot:caption>
       <h2>{{ movie.title }}</h2>
-      <words-table :results="results" :key="imdbId" />
     </template>
-  </main>
+  </words-table>
 </template>
 
 <script>
-import MovieSearch from '@/components/MovieSearch'
 import WordsTable from '@/components/WordsTable'
 
 import parseSubtitles from '@/utils/subtitles/parse'
@@ -21,7 +15,6 @@ import getMovieSuggestions from '@/utils/imdb'
 
 export default {
   components: {
-    MovieSearch,
     WordsTable
   },
   params: {
@@ -39,14 +32,6 @@ export default {
     return { subtitles, movie }
   },
   computed: {
-    imdbId: {
-      get () {
-        return this.$route.params.id
-      },
-      set (id) {
-        this.$router.push(id || '')
-      }
-    },
     options () {
       return {
         minCount: 3,
@@ -65,7 +50,7 @@ export default {
 
     const meta = []
 
-    if (BASE_URL) meta.push({ hid: 'og:url', property: 'og:url', content: `${BASE_URL}/${this.imdbId || ''}` })
+    if (BASE_URL) meta.push({ hid: 'og:url', property: 'og:url', content: `${BASE_URL}/${this.$route.path || ''}` })
 
     if (title) {
       const description = `${title} Drinking Game`
@@ -88,32 +73,8 @@ export default {
 </script>
 
 <style scoped>
-main {
-  max-width: 40em;
-  margin: 0 auto;
-  padding: 0 .5em .5em .5em;
-}
-
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 1em .4em;
-}
-
-h1 {
-  font-size: 1em;
-}
-
 h2 {
   margin: .4em 0;
   text-align: center;
-}
-</style>
-
-<style>
-body {
-  background-color: #f0f0f0;
-  font-size: calc(16px + (32 - 16) * ((100vw - 300px) / (1600 - 300)));
 }
 </style>

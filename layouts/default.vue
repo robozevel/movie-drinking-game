@@ -15,6 +15,11 @@ html {
   -webkit-overflow-scrolling: touch;
 }
 
+body {
+  background-color: #f0f0f0;
+  font-size: calc(16px + (32 - 16) * ((100vw - 300px) / (1600 - 300)));
+}
+
 *,
 *:before,
 *:after {

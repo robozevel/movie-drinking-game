@@ -1,5 +1,8 @@
 <template>
   <table>
+    <caption>
+      <slot name="caption"></slot>
+    </caption>
     <thead>
       <tr>
         <th role="button" v-for="column in columns" :key="column" :class="{ sorted: sortedBy === column, reverse }" @click="sortBy(column)">{{ column }}</th>

@@ -24,6 +24,11 @@ module.exports = () => ({
     color: '#ffac33',
     throttle: 100
   },
+  modules: [
+    ['@nuxtjs/google-analytics', {
+      id: 'UA-139919699-2'
+    }]
+  ],
   build: {
     extend(config, ctx) {
       // Run ESLint on save

@@ -5,31 +5,47 @@
     </caption>
     <thead>
       <tr>
+        <th></th>
         <th role="button" v-for="column in columns" :key="column" :class="{ sorted: sortedBy === column, reverse }" @click="sortBy(column)">{{ column }}</th>
       </tr>
     </thead>
     <tbody v-for="result in sortedResults" :key="result.word">
-      <tr role="button" @click="toggle(result.word)" :class="{ open: toggled[result.word] }">
-        <td>{{ result.word }}</td>
+      <tr role="button" @click="toggle(result.word)" :class="{ open: toggled[result.word], selected: selected[result.word] }">
+        <td @click.stop>
+          <label>
+            <input type="checkbox" v-model="selected[result.word]" hidden />
+            <div class="checkbox" role="button" />
+          </label>
+        </td>
+        <td class="word">{{ result.word }}</td>
         <td>{{ result.timestamps.length }}</td>
         <td>{{ result.average }} mins</td>
         <td>{{ result.score }}</td>
       </tr>
       <template v-if="toggled[result.word]">
         <tr v-for="(ts, i) in result.timestamps" :key="i" class="timestamp">
-          <td colspan="4">
+          <td colspan="5">
             <strong>{{ ts.start | toTimestamp }}</strong>
             <q>{{ ts.text }}</q>
           </td>
         </tr>
       </template>
     </tbody>
+    <tfoot v-if="summary">
+      <tr>
+        <td></td>
+        <td>{{ summary.word }}</td>
+        <td>{{ summary.timestamps.length }}</td>
+        <td>{{ summary.average }} mins</td>
+        <td></td>
+      </tr>
+    </tfoot>
   </table>
 </template>
 
 <script>
 import orderBy from 'lodash.orderby'
-
+import { parseOccurrences } from '~/utils/subtitles/parse'
 const pad = n => Array(2 - n.toString().length).fill(0).concat(n).join('')
 
 export default {
@@ -41,7 +57,8 @@ export default {
     return {
       reverse: false,
       sortedBy: 'score',
-      toggled: {}
+      toggled: {},
+      selected: {}
     }
   },
   computed: {
@@ -53,6 +70,28 @@ export default {
     },
     sortedResults () {
       return orderBy(this.results, this.sortedBy, this.order)
+    },
+    summary () {
+      const timestamps = []
+      const words = []
+
+      for (let [word, selected] of Object.entries(this.selected)) {
+        if (!selected) continue
+        const result = this.results.find(result => result.word === word)
+        words.push(result.word)
+        timestamps.push(...result.timestamps)
+      }
+
+      if (!words.length) return null
+
+      const [summary] = parseOccurrences([
+        [
+          words.join(', '),
+          timestamps
+        ]
+      ])
+
+      return summary
     }
   },
   methods: {
@@ -87,11 +126,15 @@ th {
   text-transform: uppercase;
   font-size: 60%;
   padding: 1em 0;
-  min-width: 6em;
   position: relative;
 }
 
-tr[role="button"] {
+th[role="button"] {
+  min-width: 6em;
+}
+
+tr[role="button"],
+tfoot tr {
   text-align: center;
 }
 
@@ -106,8 +149,21 @@ th:hover {
   background-color: #fff;
 }
 
+tr.selected,
+tr.selected[role="button"]:hover {
+  background-color: #ffcc4d;
+}
+
 td {
   padding: .5em;
+}
+
+tr[role="button"] td {
+  white-space: nowrap;
+}
+
+td.word {
+  width: 100%
 }
 
 th.sorted::after {
@@ -137,5 +193,26 @@ q::before {
 
 q::after {
     content: '\201D';
+}
+
+.checkbox {
+  margin: 0 auto;
+  transition: all .15s ease;
+  border: .1em solid #666;
+  border-radius: 6px;
+  height: 1em;
+  width: 1em;
+}
+
+[type="checkbox"]:checked + .checkbox {
+  border-color: #f4900c;
+  background-color: #f4900c;
+}
+
+tfoot td {
+  background-color: #000;
+  color: #fff;
+  position: sticky;
+  bottom: 0;
 }
 </style>

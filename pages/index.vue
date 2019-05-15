@@ -10,6 +10,7 @@
         Try: <router-link class="suggestion" :to="`/${suggestion.id}`">{{ suggestion.name }}</router-link>
       </p>
     </transition>
+    <footer>Made by <a href="https://guy.is" rel="noopener">Guy Levi</a></footer>
   </main>
 </template>
 
@@ -110,12 +111,26 @@ a.title:hover::after {
   transform: scale(1.4) rotateZ(12deg);
 }
 
+footer a {
+  color: #f4900c;
+}
+
 a.suggestion {
   transition: color .2s ease-in;
   color: #f4900c;
 }
 
+footer a:hover,
 a.suggestion:hover {
   color: #fa743e;
+}
+
+footer {
+  color: #999;
+  font-size: 60%;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 2em 0 .5em;
+  text-align: center;
 }
 </style>

@@ -6,11 +6,8 @@
     <movie-search v-model="imdbId" />
     <transition name="fade" mode="out-in">
       <nuxt-child v-if="imdbId" :key="imdbId" />
-      <p class="lead" v-else>
-        Try: <br />
-        <router-link class="suggestion" to="/tt0374900">Napoleon Dynamite (2004)</router-link>
-        <router-link class="suggestion" to="/tt0091042">Ferris Bueller's Day Off (1986)</router-link>
-        <router-link class="suggestion" to="/tt0095016">Die Hard (1988)</router-link>
+      <p class="lead" v-else-if="suggestion">
+        Try: <router-link class="suggestion" :to="`/${suggestion.id}`">{{ suggestion.name }}</router-link>
       </p>
     </transition>
   </main>
@@ -23,6 +20,31 @@ export default {
   components: {
     MovieSearch
   },
+  data () {
+    return {
+      suggestion: null,
+      suggestions: [
+        { id: 'tt0374900', name: 'Napoleon Dynamite (2004)' },
+        { id: 'tt0091042', name: 'Ferris Bueller\'s Day Off (1986)' },
+        { id: 'tt0196229', name: 'Zoolander (2001)' },
+        { id: 'tt0092099', name: 'Top Gun (1986)' },
+        { id: 'tt0117571', name: 'Scream (1996)' },
+        { id: 'tt0357413', name: 'Anchorman (2004)' },
+        { id: 'tt0087800', name: 'A Nightmare on Elm Street (1984)' },
+        { id: 'tt0204946', name: 'Bring It On (2000)' },
+        { id: 'tt0368226', name: 'The Room (2003)' },
+        { id: 'tt0993846', name: 'The Wolf of Wall Street (2013)' },
+        { id: 'tt0120737', name: 'The Lord of the Rings: The Fellowship of the Ring (2001)' },
+        { id: 'tt0446029', name: 'Scott Pilgrim vs. the World (2010)' },
+        { id: 'tt0106677', name: 'Dazed and Confused (1993)' },
+        { id: 'tt0107290', name: 'Jurassic Park (1993)' },
+        { id: 'tt0232500', name: 'The Fast and the Furious (2001)' },
+        { id: 'tt0120812', name: 'Rush Hour (1998)' },
+        { id: 'tt0120669', name: 'Fear and Loathing in Las Vegas (1998)' },
+        { id: 'tt0105236', name: 'Reservoir Dogs (1992)' }
+      ]
+    }
+  },
   computed: {
     imdbId: {
       get () {
@@ -30,6 +52,15 @@ export default {
       },
       set (id) {
         this.$router.push(id || '')
+      }
+    }
+  },
+  watch: {
+    imdbId: {
+      immediate: true,
+      handler () {
+        const i = Math.floor(Math.random() * (this.suggestions.length - 1))
+        this.suggestion = this.suggestions[i]
       }
     }
   }
@@ -55,8 +86,8 @@ h1 {
 }
 
 p.lead {
-  color: #999;
-  padding: 1em .4em;
+  padding: 1em 0;
+  text-align: center;
   line-height: 1.5;
 }
 
@@ -82,7 +113,6 @@ a.title:hover::after {
 a.suggestion {
   transition: color .2s ease-in;
   color: #f4900c;
-  display: block;
 }
 
 a.suggestion:hover {

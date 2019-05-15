@@ -1,10 +1,12 @@
 <template>
   <main>
     <header>
-      <h1><router-link to="/">LET'S GET SHITFACED 🍻</router-link></h1>
+      <h1><router-link to="/" class="title">LET'S GET SHITFACED</router-link></h1>
     </header>
     <movie-search v-model="imdbId" />
-    <nuxt-child />
+    <transition name="fade" mode="out-in">
+      <nuxt-child v-if="imdbId" :key="imdbId" />
+    </transition>
   </main>
 </template>
 
@@ -50,5 +52,24 @@ p.lead {
   color: #999;
   padding: 1em .4em;
   line-height: 1.5;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .2s ease-in;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
+a.title::after {
+  content: '🍻';
+  display: inline-block;
+  margin-left: .3em;
+  transition: transform .4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+a.title:hover::after {
+  transform: scale(1.4) rotateZ(12deg);
 }
 </style>

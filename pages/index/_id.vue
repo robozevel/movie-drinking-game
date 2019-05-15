@@ -1,5 +1,5 @@
 <template>
-  <words-table :results="results" v-if="movie">
+  <words-table :results="results">
     <template v-slot:caption>
       <h2>{{ movie.title }}</h2>
     </template>

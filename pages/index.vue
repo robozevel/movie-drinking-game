@@ -6,8 +6,8 @@
     <movie-search v-model="imdbId" />
     <transition name="fade" mode="out-in">
       <nuxt-child v-if="imdbId" :key="imdbId" />
-      <p class="lead" v-else-if="suggestion">
-        Try: <router-link class="suggestion" :to="`/${suggestion.id}`">{{ suggestion.name }}</router-link>
+      <p class="lead" v-else-if="suggestion" :class="{ hidden: !showSuggestion }">
+        Try <router-link class="suggestion" :to="`/${suggestion.id}`">{{ suggestion.name }}</router-link>
       </p>
     </transition>
     <footer>Made by <a href="https://guy.is" rel="noopener">Guy Levi</a></footer>
@@ -23,6 +23,7 @@ export default {
   },
   data () {
     return {
+      showSuggestion: false,
       suggestion: null,
       suggestions: [
         { id: 'tt0374900', name: 'Napoleon Dynamite (2004)' },
@@ -55,6 +56,9 @@ export default {
         this.$router.push(id || '')
       }
     }
+  },
+  mounted () {
+    this.showSuggestion = true
   },
   watch: {
     imdbId: {
@@ -90,6 +94,10 @@ p.lead {
   padding: 1em 0;
   text-align: center;
   line-height: 1.5;
+}
+
+p.lead.hidden {
+  visibility: hidden;
 }
 
 .fade-enter-active, .fade-leave-active {

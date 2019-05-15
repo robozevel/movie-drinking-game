@@ -6,6 +6,12 @@
     <movie-search v-model="imdbId" />
     <transition name="fade" mode="out-in">
       <nuxt-child v-if="imdbId" :key="imdbId" />
+      <p class="lead" v-else>
+        Try: <br />
+        <router-link class="suggestion" to="/tt0374900">Napoleon Dynamite (2004)</router-link>
+        <router-link class="suggestion" to="/tt0091042">Ferris Bueller's Day Off (1986)</router-link>
+        <router-link class="suggestion" to="/tt0095016">Die Hard (1988)</router-link>
+      </p>
     </transition>
   </main>
 </template>
@@ -71,5 +77,15 @@ a.title::after {
 
 a.title:hover::after {
   transform: scale(1.4) rotateZ(12deg);
+}
+
+a.suggestion {
+  transition: color .2s ease-in;
+  color: #f4900c;
+  display: block;
+}
+
+a.suggestion:hover {
+  color: #fa743e;
 }
 </style>

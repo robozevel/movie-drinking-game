@@ -145,7 +145,7 @@ tr[role="button"] {
 
 tr.open,
 tr[role="button"]:hover,
-th:hover {
+th[role="button"]:hover {
   background-color: #fff;
 }
 

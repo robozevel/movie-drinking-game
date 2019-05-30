@@ -20,31 +20,31 @@ export default {
   params: {
     id: null
   },
-  data () {
+  data() {
     return {
       subtitles: null,
       movie: null
     }
   },
-  async asyncData ({ params }) {
-    const [ movie ] = params.id ? await getMovieSuggestions(params.id) : []
-    const subtitles = params.id ? await fetchSubtitles(params.id) : null
-    return { subtitles, movie }
-  },
   computed: {
-    options () {
+    options() {
       return {
         minCount: 3,
         maxCount: 12,
         minDiff: 2
       }
     },
-    results () {
+    results() {
       if (!this.subtitles) return
       return parseSubtitles(this.subtitles, this.options)
     }
   },
-  head () {
+  async asyncData({ params }) {
+    const [movie] = params.id ? await getMovieSuggestions(params.id) : []
+    const subtitles = params.id ? await fetchSubtitles(params.id) : null
+    return { subtitles, movie }
+  },
+  head() {
     const { image, title } = Object(this.movie)
     const { BASE_URL } = process.env
 
@@ -60,12 +60,14 @@ export default {
       )
     }
 
-    if (image) meta.push(
-      { hid: 'og:image', property: 'og:image', content: image.imageUrl },
-      { hid: 'og:image:type', property: 'og:image:type', content: 'image/jpeg' },
-      { hid: 'og:image:height', property: 'og:image:height', content: image.height },
-      { hid: 'og:image:width', property: 'og:image:width', content: image.width }
-    )
+    if (image) {
+      meta.push(
+        { hid: 'og:image', property: 'og:image', content: image.imageUrl },
+        { hid: 'og:image:type', property: 'og:image:type', content: 'image/jpeg' },
+        { hid: 'og:image:height', property: 'og:image:height', content: image.height },
+        { hid: 'og:image:width', property: 'og:image:width', content: image.width }
+      )
+    }
 
     return { meta }
   }

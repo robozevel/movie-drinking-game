@@ -1,21 +1,13 @@
 module.exports = {
-  root: true,
-  env: {
-    browser: true,
-    node: true
-  },
+  plugins: ['@typescript-eslint'],
   parserOptions: {
-    parser: 'babel-eslint'
+    parser: '@typescript-eslint/parser'
   },
   extends: [
-    'plugin:vue/essential'
+    '@nuxtjs'
   ],
-  // required to lint *.vue files
-  plugins: [
-    'vue'
-  ],
-  // add your custom rules here
   rules: {
+    '@typescript-eslint/no-unused-vars': 'error',
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
   }

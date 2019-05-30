@@ -1,7 +1,9 @@
+import NuxtConfiguration from '@nuxt/config'
+
 const title = 'LET\'S GET SHITFACED 🍻'
 const description = 'Movie Drinking Game'
 
-module.exports = () => ({
+const config: NuxtConfiguration = {
   mode: 'universal',
   render: {
     fallback: false
@@ -32,7 +34,7 @@ module.exports = () => ({
   build: {
     extend(config, ctx) {
       // Run ESLint on save
-      if (ctx.isDev && ctx.isClient) {
+      if (ctx.isDev && ctx.isClient && config.module) {
         config.module.rules.push({
           enforce: 'pre',
           test: /\.(js|vue)$/,
@@ -42,4 +44,6 @@ module.exports = () => ({
       }
     }
   }
-})
+}
+
+export default config

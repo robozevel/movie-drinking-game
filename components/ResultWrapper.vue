@@ -1,10 +1,14 @@
 <template>
-  <div class="result" role="button"><slot></slot></div>
+  <div class="result" role="button">
+    <slot />
+  </div>
 </template>
 
-<script>
-export default {
-  name: 'ResultWrapper'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+
+@Component
+export default class ResultWrapper extends Vue {
 }
 </script>
 

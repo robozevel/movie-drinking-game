@@ -1,48 +1,58 @@
 <template>
-  <autocomplete ref="autocomplete" v-model="result" :placeholder="placeholder" :title="title" :search="search" autofocus>
+  <autocomplete
+    ref="autocomplete"
+    v-model="selected"
+    :placeholder="placeholder"
+    :title="title"
+    :search="search"
+    autofocus
+  >
     <template slot-scope="{ result, activeResult }">
       <result-wrapper class="result" :class="{ active: result === activeResult }">
-        <div class="title">{{ result.title }}</div>
-        <div class="subtitle">{{ result.subtitle }}</div>
+        <div class="title">
+          {{ result.title }}
+        </div>
+        <div class="subtitle">
+          {{ result.subtitle }}
+        </div>
       </result-wrapper>
     </template>
   </autocomplete>
 </template>
 
-<script>
-import Autocomplete from '@/components/Autocomplete'
-import ResultWrapper from '@/components/ResultWrapper'
+<script lang="ts">
+import { Component, Vue, Prop } from 'vue-property-decorator'
+import Autocomplete from '@/components/Autocomplete.vue'
+import ResultWrapper from '@/components/ResultWrapper.vue'
 import getMovieSuggestions from '@/utils/imdb'
 
-export default {
-  name: 'MovieSearch',
+@Component({
   components: {
     Autocomplete,
     ResultWrapper
-  },
-  props: {
-    value: null
-  },
-  computed: {
-    title () {
-      return 'Search movie'
-    },
-    placeholder () {
-      return this.title
-    },
-    result: {
-      get () {
-        return this.value
-      },
-      set (result) {
-        this.$emit('input', result ? result.id : null)
-      }
-    }
-  },
-  methods: {
-    async search (query) {
-      return query ? await getMovieSuggestions(query) : []
-    }
+  }
+})
+export default class MovieSearch extends Vue {
+  @Prop({ type: [String, Object], default: null }) value
+
+  get title() {
+    return 'Search movie'
+  }
+
+  get placeholder() {
+    return this.title
+  }
+
+  get selected() {
+    return this.value
+  }
+
+  set selected(result) {
+    this.$emit('input', result ? result.id : null)
+  }
+
+  search(query) {
+    return query ? getMovieSuggestions(query) : []
   }
 }
 </script>

@@ -1,10 +1,23 @@
 <template>
   <form novalidate @submit.prevent="select(activeResult)" @keydown.up.prevent="up" @keydown.down.prevent="down">
-    <input type="search" :autofocus="autofocus" ref="input" class="autocomplete" @keyup.esc.stop.capture="clear" v-model.trim="query" :title="title" :placeholder="placeholder" pattern="\S+" minlength="1" required :disabled="disabled" />
-    <span class="loader" :class="{ visible: showLoader }"></span>
-    <span class="count" v-if="showCount">{{ resultsCountLabel }}</span>
+    <input
+      ref="input"
+      v-model.trim="query"
+      type="search"
+      :autofocus="autofocus"
+      class="autocomplete"
+      :title="title"
+      :placeholder="placeholder"
+      pattern="\S+"
+      minlength="1"
+      required
+      :disabled="disabled"
+      @keyup.esc.stop.capture="clear"
+    >
+    <span class="loader" :class="{ visible: showLoader }" />
+    <span v-if="showCount" class="count">{{ resultsCountLabel }}</span>
     <ol class="results" :style="{ '--results-count': visibleResultsCount }">
-      <li v-for="result in results" @click="select(result)" :key="result.id" ref="results">
+      <li v-for="result in results" :key="result.id" ref="results" @click="select(result)">
         <slot :result="result" :active-result="activeResult" />
       </li>
     </ol>
@@ -21,17 +34,44 @@ export default {
       type: Function,
       required: true
     },
-    title: String,
-    placeholder: String,
-    autofocus: Boolean,
-    disabled: Boolean,
-    loading: Boolean,
-    initial: String,
-    showCount: Boolean,
-    allowEmpty: Boolean,
-    value: null
+    title: {
+      type: String,
+      default: ''
+    },
+    placeholder: {
+      type: String,
+      default: ''
+    },
+    autofocus: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    loading: {
+      type: Boolean,
+      default: false
+    },
+    initial: {
+      type: String,
+      default: ''
+    },
+    showCount: {
+      type: Boolean,
+      default: false
+    },
+    allowEmpty: {
+      type: Boolean,
+      default: false
+    },
+    value: {
+      type: String,
+      default: ''
+    }
   },
-  data () {
+  data() {
     return {
       searching: false,
       activeResult: null,
@@ -40,60 +80,21 @@ export default {
     }
   },
   computed: {
-    visibleResultsCount () {
+    visibleResultsCount() {
       return Math.min(this.resultsCount, 5)
     },
-    resultsCount () {
+    resultsCount() {
       return size(this.results)
     },
-    resultsCountLabel () {
+    resultsCountLabel() {
       if (!this.results) return
       return `${this.resultsCount} ${this.resultsCount > 1 ? 'results' : 'result'}`
     },
-    scrollNeeded () {
+    scrollNeeded() {
       return this.resultsCount > this.visibleResultsCount
     },
-    showLoader () {
+    showLoader() {
       return this.loading || this.searching
-    }
-  },
-  methods: {
-    select (result) {
-      this.query = null
-      this.$emit('input', result)
-    },
-    focus () {
-      this.$refs.input.focus()
-    },
-    blur () {
-      this.$refs.input.blur()
-    },
-    clear (e) {
-      if (!this.results) this.$emit('clear')
-    },
-    up () {
-      this.navigate(-1, this.resultsCount - 1)
-      this.scrollToActiveResult(true)
-    },
-    down () {
-      this.navigate(1, 0)
-      this.scrollToActiveResult(false)
-    },
-    navigate (offset, fallback) {
-      const { activeResult, results } = this
-      if (!results) return
-      const i = results.indexOf(activeResult)
-      this.activeResult = results[i + offset] || results[fallback]
-    },
-    getActiveResultElement () {
-      const i = this.resultsCount ? this.results.indexOf(this.activeResult) : -1
-      return this.$refs.results[i]
-    },
-    scrollToActiveResult (alignToTop) {
-      if (!this.scrollNeeded) return
-      const $el = this.getActiveResultElement()
-      if ($el.scrollIntoViewIfNeeded) $el.scrollIntoViewIfNeeded(false)
-      else $el.scrollIntoView(alignToTop)
     }
   },
   watch: {
@@ -101,9 +102,8 @@ export default {
       immediate: true,
       handler: debounce(async function (query) {
         if (!query && !this.allowEmpty) {
-          return this.$nextTick(() => {
-            this.results = null
-          })
+          await this.$nextTick()
+          this.results = null
         }
 
         this.searching = true
@@ -118,14 +118,53 @@ export default {
         this.searching = false
       }, 200)
     },
-    results (results) {
+    results(results) {
       this.activeResult = results ? results[0] : null
     }
   },
-  mounted () {
-    this.$watch('autofocus', autofocus => {
+  mounted() {
+    this.$watch('autofocus', (autofocus) => {
       if (autofocus) this.$refs.input.focus()
     }, { immediate: true })
+  },
+  methods: {
+    select(result) {
+      this.query = null
+      this.$emit('input', result)
+    },
+    focus() {
+      this.$refs.input.focus()
+    },
+    blur() {
+      this.$refs.input.blur()
+    },
+    clear() {
+      if (!this.results) this.$emit('clear')
+    },
+    up() {
+      this.navigate(-1, this.resultsCount - 1)
+      this.scrollToActiveResult(true)
+    },
+    down() {
+      this.navigate(1, 0)
+      this.scrollToActiveResult(false)
+    },
+    navigate(offset, fallback) {
+      const { activeResult, results } = this
+      if (!results) return
+      const i = results.indexOf(activeResult)
+      this.activeResult = results[i + offset] || results[fallback]
+    },
+    getActiveResultElement() {
+      const i = this.resultsCount ? this.results.indexOf(this.activeResult) : -1
+      return this.$refs.results[i]
+    },
+    scrollToActiveResult(alignToTop) {
+      if (!this.scrollNeeded) return
+      const $el = this.getActiveResultElement()
+      if ($el.scrollIntoViewIfNeeded) $el.scrollIntoViewIfNeeded(false)
+      else $el.scrollIntoView(alignToTop)
+    }
   }
 }
 </script>

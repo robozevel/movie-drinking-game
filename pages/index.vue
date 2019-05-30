@@ -1,13 +1,19 @@
 <template>
   <main>
     <header>
-      <h1><router-link to="/" class="title">LET'S GET SHITFACED</router-link></h1>
+      <h1>
+        <router-link to="/" class="title">
+          LET'S GET SHITFACED
+        </router-link>
+      </h1>
     </header>
     <movie-search v-model="imdbId" />
     <transition name="fade" mode="out-in">
       <nuxt-child v-if="imdbId" :key="imdbId" />
-      <p class="lead" v-else-if="suggestion" :class="{ hidden: !showSuggestion }">
-        Try <router-link class="suggestion" :to="`/${suggestion.id}`">{{ suggestion.name }}</router-link>
+      <p v-else-if="suggestion" class="lead" :class="{ hidden: !showSuggestion }">
+        Try <router-link class="suggestion" :to="`/${suggestion.id}`">
+          {{ suggestion.name }}
+        </router-link>
       </p>
     </transition>
     <footer>Made by <a href="https://guy.is" rel="noopener">Guy Levi</a></footer>
@@ -21,7 +27,7 @@ export default {
   components: {
     MovieSearch
   },
-  data () {
+  data() {
     return {
       showSuggestion: false,
       suggestion: null,
@@ -49,25 +55,25 @@ export default {
   },
   computed: {
     imdbId: {
-      get () {
+      get() {
         return this.$route.params.id
       },
-      set (id) {
+      set(id) {
         this.$router.push(id || '')
       }
     }
   },
-  mounted () {
-    this.showSuggestion = true
-  },
   watch: {
     imdbId: {
       immediate: true,
-      handler () {
+      handler() {
         const i = Math.floor(Math.random() * (this.suggestions.length - 1))
         this.suggestion = this.suggestions[i]
       }
     }
+  },
+  mounted() {
+    this.showSuggestion = true
   }
 }
 </script>

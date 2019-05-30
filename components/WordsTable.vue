@@ -1,23 +1,27 @@
 <template>
   <table>
     <caption>
-      <slot name="caption"></slot>
+      <slot name="caption" />
     </caption>
     <thead>
       <tr>
-        <th></th>
-        <th role="button" v-for="column in columns" :key="column" :class="{ sorted: sortedBy === column, reverse }" @click="sortBy(column)">{{ column }}</th>
+        <th />
+        <th v-for="column in columns" :key="column" role="button" :class="{ sorted: sortedBy === column, reverse }" @click="sortBy(column)">
+          {{ column }}
+        </th>
       </tr>
     </thead>
     <tbody v-for="result in sortedResults" :key="result.word">
-      <tr role="button" @click="toggle(result.word)" :class="{ open: toggled[result.word], selected: selected[result.word] }">
+      <tr role="button" :class="{ open: toggled[result.word], selected: selected[result.word] }" @click="toggle(result.word)">
         <td @click.stop>
           <label>
-            <input type="checkbox" v-model="selected[result.word]" hidden />
+            <input v-model="selected[result.word]" type="checkbox" hidden>
             <div class="checkbox" role="button" />
           </label>
         </td>
-        <td class="word">{{ result.word }}</td>
+        <td class="word">
+          {{ result.word }}
+        </td>
         <td>{{ result.timestamps.length }}</td>
         <td>{{ result.average }} mins</td>
         <td>{{ result.score }}</td>
@@ -33,81 +37,79 @@
     </tbody>
     <tfoot v-if="summary">
       <tr>
-        <td></td>
+        <td />
         <td>{{ summary.word }}</td>
         <td>{{ summary.timestamps.length }}</td>
         <td>{{ summary.average }} mins</td>
-        <td></td>
+        <td />
       </tr>
     </tfoot>
   </table>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Vue, Prop } from 'vue-property-decorator'
 import orderBy from 'lodash.orderby'
 import { parseOccurrences } from '~/utils/subtitles/parse'
 const pad = n => Array(2 - n.toString().length).fill(0).concat(n).join('')
 
-export default {
-  name: 'WordsTable',
-  props: {
-    results: null
-  },
-  data () {
-    return {
-      reverse: false,
-      sortedBy: 'score',
-      toggled: {},
-      selected: {}
-    }
-  },
-  computed: {
-    order () {
-      return this.reverse ? 'asc' : 'desc'
-    },
-    columns () {
-      return ['word', 'count', 'average', 'score']
-    },
-    sortedResults () {
-      return orderBy(this.results, this.sortedBy, this.order)
-    },
-    summary () {
-      const timestamps = []
-      const words = []
-
-      for (let [word, selected] of Object.entries(this.selected)) {
-        if (!selected) continue
-        const result = this.results.find(result => result.word === word)
-        words.push(result.word)
-        timestamps.push(...result.timestamps)
-      }
-
-      if (!words.length) return null
-
-      const [summary] = parseOccurrences([
-        [
-          words.join(', '),
-          timestamps
-        ]
-      ])
-
-      return summary
-    }
-  },
-  methods: {
-    toggle (id) {
-      this.$set(this.toggled, id, !this.toggled[id])
-    },
-    sortBy (column) {
-      if (column === this.sortedBy) this.reverse = !this.reverse
-      else this.sortedBy = column
-    }
-  },
+@Component({
   filters: {
-    toTimestamp (ts) {
+    toTimestamp(ts) {
       const date = new Date(0, 0, 0, 0, 0, 0, ts)
       return [date.getHours(), date.getMinutes(), date.getSeconds()].map(pad).join(':')
     }
+  }
+})
+export default class WordsTable extends Vue {
+  @Prop({ type: Array, default: [] }) results
+  reverse = false
+  sortedBy = 'score'
+  toggled = {}
+  selected = {}
+
+  get order() {
+    return this.reverse ? 'asc' : 'desc'
+  }
+
+  get columns() {
+    return ['word', 'count', 'average', 'score']
+  }
+
+  get sortedResults() {
+    return orderBy(this.results, this.sortedBy, this.order)
+  }
+
+  get summary() {
+    const timestamps : number[] = []
+    const words: string[] = []
+
+    for (const [word, selected] of Object.entries(this.selected)) {
+      if (!selected) continue
+      const result = this.results.find(result => result.word === word)
+      words.push(result.word)
+      timestamps.push(...result.timestamps)
+    }
+
+    if (!words.length) return null
+
+    const [summary] = parseOccurrences([
+      [
+        words.join(', '),
+        timestamps
+      ]
+    ])
+
+    return summary
+  }
+
+  toggle(id) {
+    this.$set(this.toggled, id, !this.toggled[id])
+  }
+
+  sortBy(column) {
+    if (column === this.sortedBy) this.reverse = !this.reverse
+    else this.sortedBy = column
   }
 }
 </script>

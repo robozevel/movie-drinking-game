@@ -1,10 +1,10 @@
 import { mean, stdev } from 'stats-lite'
 import { uniqueWords } from 'truly-unique'
 
-export function parseOccurrences (occurrences, options = {}) {
+export function parseOccurrences(occurrences, options = {}) {
   const results = []
 
-  for (let [word, timestamps] of occurrences) {
+  for (const [word, timestamps] of occurrences) {
     const count = timestamps.length
     if (count < options.minCount || count > options.maxCount) continue
 
@@ -20,13 +20,12 @@ export function parseOccurrences (occurrences, options = {}) {
 }
 
 export default (subtitles, options) => {
-
   const occurrences = new Map()
-  for (let cue of subtitles) {
+  for (const cue of subtitles) {
     const { text, start } = cue
     if (text.includes('OpenSubtitles')) continue
     const words = uniqueWords(text, { stopwords: true })
-    for (let word of words) {
+    for (const word of words) {
       const timestamps = occurrences.get(word) || []
       timestamps.push({ start, text })
       occurrences.set(word, timestamps)

@@ -23,5 +23,10 @@
   ],
   "env": {
     "BASE_URL": "https://shitfaced.guy.is"
+  },
+  "build": {
+    "env": {
+      "NODE_PRESERVE_SYMLINKS": "1"
+    }
   }
 }

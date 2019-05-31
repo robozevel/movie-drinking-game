@@ -1,9 +1,7 @@
-import NuxtConfiguration from '@nuxt/config'
-
 const title = 'LET\'S GET SHITFACED 🍻'
 const description = 'Movie Drinking Game'
 
-const config: NuxtConfiguration = {
+export default {
   mode: 'universal',
   render: {
     fallback: false
@@ -45,5 +43,3 @@ const config: NuxtConfiguration = {
     }
   }
 }
-
-export default config

@@ -3,6 +3,7 @@ const description = 'Movie Drinking Game'
 
 export default {
   mode: 'universal',
+  modern: 'client',
   render: {
     fallback: false
   },

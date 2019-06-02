@@ -12,21 +12,7 @@ import WordsTable from '@/components/WordsTable.vue'
 import parseSubtitles from '@/utils/subtitles/parse'
 import fetchSubtitles from '@/utils/subtitles/fetch'
 import getMovieSuggestions from '@/utils/imdb'
-
-class Cue {
-  start! : number
-  end! : number
-  text! : string
-}
-
-type Subtitles = Cue[]
-
-class Movie {
-  id! : string
-  title! : string
-  subtitle! : string
-  image! : string
-}
+import { Subtitles, Movie } from '@/models'
 
 @Component({
   components: {

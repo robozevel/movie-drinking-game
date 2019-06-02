@@ -25,6 +25,7 @@ import { Component, Vue, Prop } from 'nuxt-property-decorator'
 import Autocomplete from '@/components/Autocomplete.vue'
 import ResultWrapper from '@/components/ResultWrapper.vue'
 import getMovieSuggestions from '@/utils/imdb'
+import { Movie } from '@/models'
 
 @Component({
   components: {
@@ -33,7 +34,7 @@ import getMovieSuggestions from '@/utils/imdb'
   }
 })
 export default class MovieSearch extends Vue {
-  @Prop({ type: [String, Object], default: null }) value
+  @Prop() value? : Movie
 
   get title() {
     return 'Search movie'

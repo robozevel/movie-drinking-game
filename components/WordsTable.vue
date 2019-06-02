@@ -50,8 +50,9 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'nuxt-property-decorator'
 import orderBy from 'lodash.orderby'
-import { parseOccurrences } from '~/utils/subtitles/parse'
-const pad = n => Array(2 - n.toString().length).fill(0).concat(n).join('')
+import { parseOccurrences } from '@/utils/subtitles/parse'
+import pad from '@/utils/pad'
+import { Results } from '@/models'
 
 @Component({
   filters: {
@@ -62,7 +63,7 @@ const pad = n => Array(2 - n.toString().length).fill(0).concat(n).join('')
   }
 })
 export default class WordsTable extends Vue {
-  @Prop({ type: Array, default: [] }) results
+  @Prop() results? : Results
   reverse = false
   sortedBy = 'score'
   toggled = {}
@@ -83,10 +84,12 @@ export default class WordsTable extends Vue {
   get summary() {
     const timestamps : number[] = []
     const words: string[] = []
+    const results : Results = this.results || []
 
     for (const [word, selected] of Object.entries(this.selected)) {
       if (!selected) continue
-      const result = this.results.find(result => result.word === word)
+      const result = results.find(result => result.word === word)
+      if (!result) continue
       words.push(result.word)
       timestamps.push(...result.timestamps)
     }

@@ -20,58 +20,40 @@
   </main>
 </template>
 
-<script>
-import MovieSearch from '@/components/MovieSearch'
+<script lang="ts">
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import MovieSearch from '@/components/MovieSearch.vue'
+import MOVIE_SUGGESTIONS from '@/utils/suggestions'
 
-export default {
+class Movie {
+  id?: String
+  name?: String
+}
+
+@Component({
   components: {
     MovieSearch
-  },
-  data() {
-    return {
-      showSuggestion: false,
-      suggestion: null,
-      suggestions: [
-        { id: 'tt0374900', name: 'Napoleon Dynamite (2004)' },
-        { id: 'tt0091042', name: 'Ferris Bueller\'s Day Off (1986)' },
-        { id: 'tt0196229', name: 'Zoolander (2001)' },
-        { id: 'tt0092099', name: 'Top Gun (1986)' },
-        { id: 'tt0117571', name: 'Scream (1996)' },
-        { id: 'tt0357413', name: 'Anchorman (2004)' },
-        { id: 'tt0087800', name: 'A Nightmare on Elm Street (1984)' },
-        { id: 'tt0204946', name: 'Bring It On (2000)' },
-        { id: 'tt0368226', name: 'The Room (2003)' },
-        { id: 'tt0993846', name: 'The Wolf of Wall Street (2013)' },
-        { id: 'tt0120737', name: 'The Lord of the Rings: The Fellowship of the Ring (2001)' },
-        { id: 'tt0446029', name: 'Scott Pilgrim vs. the World (2010)' },
-        { id: 'tt0106677', name: 'Dazed and Confused (1993)' },
-        { id: 'tt0107290', name: 'Jurassic Park (1993)' },
-        { id: 'tt0232500', name: 'The Fast and the Furious (2001)' },
-        { id: 'tt0120812', name: 'Rush Hour (1998)' },
-        { id: 'tt0120669', name: 'Fear and Loathing in Las Vegas (1998)' },
-        { id: 'tt0105236', name: 'Reservoir Dogs (1992)' }
-      ]
-    }
-  },
-  computed: {
-    imdbId: {
-      get() {
-        return this.$route.params.id
-      },
-      set(id) {
-        this.$router.push(id || '')
-      }
-    }
-  },
-  watch: {
-    imdbId: {
-      immediate: true,
-      handler() {
-        const i = Math.floor(Math.random() * (this.suggestions.length - 1))
-        this.suggestion = this.suggestions[i]
-      }
-    }
-  },
+  }
+})
+export default class Index extends Vue {
+  showSuggestion = false
+  suggestion! : Movie
+  suggestions : Movie[] = MOVIE_SUGGESTIONS
+
+  get imdbId() {
+    return this.$route.params.id
+  }
+
+  set imdbId(id) {
+    this.$router.push(id || '')
+  }
+
+  @Watch('imdbId', { immediate: true })
+  onImdbIdChange() {
+    const i = Math.floor(Math.random() * (this.suggestions.length - 1))
+    this.suggestion = this.suggestions[i]
+  }
+
   mounted() {
     this.showSuggestion = true
   }

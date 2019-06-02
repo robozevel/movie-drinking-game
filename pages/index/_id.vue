@@ -1,54 +1,48 @@
 <template>
   <words-table :results="results">
-    <template v-slot:caption>
+    <template #caption>
       <h2>{{ movie.title }}</h2>
     </template>
   </words-table>
 </template>
 
-<script>
-import WordsTable from '@/components/WordsTable'
-
+<script lang="ts">
+import { Component, Vue, Prop } from 'vue-property-decorator'
+import WordsTable from '@/components/WordsTable.vue'
 import parseSubtitles from '@/utils/subtitles/parse'
 import fetchSubtitles from '@/utils/subtitles/fetch'
 import getMovieSuggestions from '@/utils/imdb'
 
-export default {
+class Cue {
+  start! : number
+  end! : number
+  text! : string
+}
+
+type Subtitles = Cue[]
+
+class Movie {
+  id! : string
+  title! : string
+  subtitle! : string
+  image! : string
+}
+
+@Component({
   components: {
     WordsTable
   },
-  params: {
-    id: null
-  },
-  data() {
-    return {
-      subtitles: null,
-      movie: null
-    }
-  },
-  computed: {
-    options() {
-      return {
-        minCount: 3,
-        maxCount: 12,
-        minDiff: 2
-      }
-    },
-    results() {
-      if (!this.subtitles) return
-      return parseSubtitles(this.subtitles, this.options)
-    }
-  },
   async asyncData({ params }) {
-    const [movie] = params.id ? await getMovieSuggestions(params.id) : []
+    const [movie] : Movie[] = params.id ? await getMovieSuggestions(params.id) : []
     const subtitles = params.id ? await fetchSubtitles(params.id) : null
     return { subtitles, movie }
   },
   head() {
+    // @ts-ignore
     const { image, title } = Object(this.movie)
     const { BASE_URL } = process.env
 
-    const meta = []
+    const meta : { hid: string, name?: string, property?: string, content?: string }[] = []
 
     if (BASE_URL) meta.push({ hid: 'og:url', property: 'og:url', content: `${BASE_URL}/${this.$route.path || ''}` })
 
@@ -70,6 +64,24 @@ export default {
     }
 
     return { meta }
+  }
+})
+export default class extends Vue {
+  @Prop({ type: String }) id
+  subtitles! : Subtitles
+  movie! : Movie
+
+  get options() {
+    return {
+      minCount: 3,
+      maxCount: 12,
+      minDiff: 2
+    }
+  }
+
+  get results() {
+    if (!this.subtitles) return
+    return parseSubtitles(this.subtitles, this.options)
   }
 }
 </script>

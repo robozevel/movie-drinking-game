@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'nuxt-property-decorator'
 import WordsTable from '@/components/WordsTable.vue'
 import parseSubtitles from '@/utils/subtitles/parse'
 import fetchSubtitles from '@/utils/subtitles/fetch'
@@ -67,7 +67,7 @@ class Movie {
   }
 })
 export default class extends Vue {
-  @Prop({ type: String }) id
+  @Prop() id! : string
   subtitles! : Subtitles
   movie! : Movie
 

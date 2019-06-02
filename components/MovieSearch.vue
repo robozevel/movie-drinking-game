@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'nuxt-property-decorator'
 import Autocomplete from '@/components/Autocomplete.vue'
 import ResultWrapper from '@/components/ResultWrapper.vue'
 import getMovieSuggestions from '@/utils/imdb'

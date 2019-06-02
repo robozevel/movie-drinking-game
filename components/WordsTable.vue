@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'nuxt-property-decorator'
 import orderBy from 'lodash.orderby'
 import { parseOccurrences } from '~/utils/subtitles/parse'
 const pad = n => Array(2 - n.toString().length).fill(0).concat(n).join('')

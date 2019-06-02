@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'nuxt-property-decorator'
 import MovieSearch from '@/components/MovieSearch.vue'
 import MOVIE_SUGGESTIONS from '@/utils/suggestions'
 

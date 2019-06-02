@@ -5,6 +5,7 @@
     "node_modules_prod"
   ],
   "compilerOptions": {
+    "emitDecoratorMetadata": true,
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
